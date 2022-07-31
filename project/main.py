@@ -3,16 +3,19 @@ import cv2
 import pytesseract
  
 # Mention the installed location of Tesseract-OCR in your system
-pytesseract.pytesseract.tesseract_cmd = 'System_path_to_tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
  
 # Read image from which text needs to be extracted
-img = cv2.imread("label.jpg")
- 
+img = cv2.imread("project/sample4.jpg")
+
 # Preprocessing the image starts
  
 # Convert the image to gray scale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
- 
+
+cv2.imshow('gray image', gray)
+cv2.waitKey(0)
+
 # Performing OTSU threshold
 ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
  
@@ -37,7 +40,7 @@ im2 = img.copy()
 file = open("recognized.txt", "w+")
 file.write("")
 file.close()
- 
+
 # Looping through the identified contours
 # Then rectangular part is cropped and passed on
 # to pytesseract for extracting text from it
@@ -62,4 +65,4 @@ for cnt in contours:
     file.write("\n")
      
     # Close the file
-    file.close
+    file.close 
