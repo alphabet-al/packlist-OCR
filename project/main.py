@@ -4,9 +4,9 @@ import pytesseract
  
 # Mention the installed location of Tesseract-OCR in your system
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
- 
+  
 # Read image from which text needs to be extracted
-img = cv2.imread("project/label2.jpg")
+img = cv2.imread("project/label_wp.jpg")
 
 # Convert the image to gray scale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -25,7 +25,7 @@ ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_I
 # of the rectangle to be detected.
 # A smaller value like (10, 10) will detect
 # each word instead of a sentence.
-rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
+rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
  
 # Applying dilation on the threshold image
 dilation = cv2.dilate(thresh1, rect_kernel, iterations = 1) 
@@ -54,7 +54,7 @@ for cnt in contours:
     cv2.imshow("result", im2)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-     
+       
     # Cropping the text block for giving input to OCR
     cropped = im2[y:y + h, x:x + w]
      
