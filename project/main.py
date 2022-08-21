@@ -69,4 +69,4 @@ for cnt in contours:
     file.write("\n")
      
     # Close the file
-    file.close 
+    file.close

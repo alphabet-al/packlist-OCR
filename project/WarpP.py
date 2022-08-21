@@ -20,7 +20,8 @@ def biggest_contour(contours):
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
  
 # Read image from which text needs to be extracted
-img = cv2.imread("project/resized.jpg")
+img = cv2.imread("project/label.jpg", cv2.IMREAD_REDUCED_COLOR_2)
+
 img_original = img.copy()
 
 # Convert the image to gray scale 
@@ -61,6 +62,7 @@ converted_points = np.float32([[0,0], [max_width, 0], [0, max_height], [max_widt
 # Perspective transformation
 matrix = cv2.getPerspectiveTransform(input_points, converted_points)
 img_output = cv2.warpPerspective(img_original, matrix, (max_width, max_height))
+resized = cv2.resize(img_output, (600, 600), interpolation = cv2.INTER_AREA)
 
 gray = np.stack((gray,) * 3, axis = -1)
 edged = np.stack((edged,) * 3, axis = -1)
@@ -68,7 +70,7 @@ img_hor = np.hstack((img_original, gray, edged, img))
 cv2.imshow("Contour detection", img_hor)
 cv2.imshow('Warped perspective', img_output)
 
-cv2.imwrite('project/label_wp.jpg',img_output)
+cv2.imwrite('project/label_wp.jpg',resized)
 
 cv2.waitKey(0)
 
