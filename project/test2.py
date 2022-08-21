@@ -4,7 +4,7 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
   
-img = cv2.imread("project/IMG.jpg", cv2.IMREAD_UNCHANGED)
+img = cv2.imread("project/90861.jpg", cv2.IMREAD_UNCHANGED)
 # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

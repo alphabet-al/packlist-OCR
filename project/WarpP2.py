@@ -8,8 +8,7 @@ def biggest_contour(contours):
     max_area = 0
     for i in contours:
         area = cv2.contourArea(i)
-        if area > 500:
-            print(area)
+        if area > 1000:
             peri = cv2.arcLength(i, True)
             approx = cv2.approxPolyDP(i, 0.015 * peri, True)
             if area > max_area and len(approx) == 4:
@@ -21,20 +20,30 @@ def biggest_contour(contours):
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
  
 # Read image from which text needs to be extracted
-img = cv2.imread("project/label2.jpg", cv2.IMREAD_REDUCED_COLOR_2)
+img = cv2.imread("project/IMG.jpg", cv2.IMREAD_UNCHANGED)
 
 img_original = img.copy()
 
-# Convert the image to gray scale 
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# gray = cv2.fastNlMeansDenoising(gray, 10, 10, 7, 21)
-# gray = cv2.bilateralFilter(gray, 1, 1, 1)
-edged = cv2.Canny(gray, 100, 200)
-
-cv2.imshow('original', img)
-cv2.imshow('gray perspective', gray)
-cv2.imshow('Edged perspective', edged)
+hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+# lower bound and upper bound for Green color
+lower_bound = 200  
+upper_bound = 255
+# find the colors within the boundaries
+mask = cv2.inRange(hsv, lower_bound, upper_bound)
+cv2.imshow('original', hsv)
+cv2.imshow('masked', mask)
 cv2.waitKey(0)
+
+
+
+# Convert the image to gray scale 
+# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# gray = cv2.bilateralFilter(gray, 10, 100, 100)
+# edged = cv2.Canny(gray, 80, 100)
+# cv2.imshow('original', img)
+# cv2.imshow('gray perspective', gray)
+# cv2.imshow('Edged perspective', edged)
+# cv2.waitKey(0)
 
 contours, hierarcy = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 contours = sorted(contours, key = cv2.contourArea, reverse=True) [:10]
