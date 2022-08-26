@@ -26,7 +26,7 @@ if src is None:
     print('Could not open or find the image:', args.input)
     exit(0)
 # Convert image to gray and blur it
-src_gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
+src_gray = cv.cvtColor(src, cv.COLOR_BGR2HSV_FULL)
 src_gray = cv.blur(src_gray, (3,3))
 # Create Window
 source_window = 'Source'

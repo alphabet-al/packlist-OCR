@@ -21,19 +21,22 @@ def biggest_contour(contours):
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
  
 # Read image from which text needs to be extracted
-img = cv2.imread("project/label2.jpg", cv2.IMREAD_REDUCED_COLOR_2)
+img = cv2.imread("project/label.jpg", cv2.IMREAD_REDUCED_COLOR_2)
 
 img_original = img.copy()
+print(img)
 
 # Convert the image to gray scale 
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+color = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
+print(color)
+a_component = color[:,:,0]
 # gray = cv2.fastNlMeansDenoising(gray, 10, 10, 7, 21)
 # gray = cv2.bilateralFilter(gray, 1, 1, 1)
-edged = cv2.Canny(gray, 100, 200)
+edged = cv2.Canny(a_component, 10, 50)
 
-cv2.imshow('original', img)
-cv2.imshow('gray perspective', gray)
-cv2.imshow('Edged perspective', edged)
+# cv2.imshow('original', img)
+cv2.imshow('Color', color)
+cv2.imshow('Edged', edged)
 cv2.waitKey(0)
 
 contours, hierarcy = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -70,9 +73,9 @@ converted_points = np.float32([[0,0], [max_width, 0], [0, max_height], [max_widt
 matrix = cv2.getPerspectiveTransform(input_points, converted_points)
 img_output = cv2.warpPerspective(img_original, matrix, (max_width, max_height))
 
-gray = np.stack((gray,) * 3, axis = -1)
+color = np.stack((color,) * 3, axis = -1)
 edged = np.stack((edged,) * 3, axis = -1)
-img_hor = np.hstack((img_original, gray, edged, img))
+img_hor = np.hstack((img_original, color, edged, img))
 
 cv2.imshow("Contour detection", img_hor)
 cv2.imshow('Warped perspective', img_output)
