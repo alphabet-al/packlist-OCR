@@ -4,40 +4,28 @@ import pytesseract
 from PIL import Image, ExifTags
 import re
 
-''' taking a picture with the camera upside down will cause image to be orientated the wrong way.  This function
-checks the orientation of the taken image and rotates it prior to processing the image'''
+cap = cv2.VideoCapture(1)
 
-def check_image_orientation(img_path):
+# Check if the webcam is opened correctly
+if not cap.isOpened():
+    raise IOError("Cannot open webcam")
 
-    try:
-        image=Image.open(img_path)
+while True:
+    _ , frame = cap.read()
+    cv2.imshow('Text detection', frame)
+    if cv2.waitKey(1) & 0xFF == ord('s'):
+        cv2.imwrite('project\capture_image.jpg', frame)
+        break
+cap.release()
+cv2.destroyAllWindows()
 
-        for orientation in ExifTags.TAGS.keys():
-            if ExifTags.TAGS[orientation]=='Orientation':
-                break
-        
-        exif = image._getexif()
 
-        if exif[orientation] == 3:
-            image=image.rotate(180, expand=True)
-        elif exif[orientation] == 6: 
-            image=image.rotate(270, expand=True)
-        elif exif[orientation] == 8:
-            image=image.rotate(90, expand=True)
-
-        image.save(img_path)
-        image.close()
-    except (AttributeError, KeyError, IndexError, TypeError):
-        # cases: image don't have getexif
-        pass
-
-image_path = 'project/IMG_3162.jpg'
-check_image_orientation(image_path)
+image_path = 'project/capture_image.jpg'
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
  
 img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
-img = cv2.resize(img, (0,0), fx = 0.5, fy = 0.5)
+img = cv2.resize(img, (0,0), fx = 2.0, fy = 2.0)
 
 # coverts image to grayscale, applys noise filter and edge detector
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
