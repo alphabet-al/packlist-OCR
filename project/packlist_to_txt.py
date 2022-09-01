@@ -2,6 +2,7 @@ import pdfplumber
 import re
 import pandas as pd
 
+
 input = r'project\\90861.pdf'
 text = ''
 
@@ -28,3 +29,6 @@ print(df)
 # Check on Quantity to see if all correct values passed. Cross Reference actual Grand Total on Packlist
 # Total = df['Qty'].sum()
 # print(Total)
+
+# export to excel file
+# df.to_excel(r'project\packlist.xlsx', index = False)
