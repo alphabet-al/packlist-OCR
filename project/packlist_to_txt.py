@@ -17,13 +17,13 @@ for row in text.split('\n'):
     if good_row_re.findall(row):
         filtered_lst.append([row.split()[1], row.split()[2], int(row.split()[-1])])
 
-print(filtered_lst)
+# print(filtered_lst)
 
 df = pd.DataFrame(filtered_lst)
 df.columns = ["Project", "Part", "Qty"]
 df['Picked Qty'] = ''
 
-dflist = ['Qty']
+# dflist = ['Qty']
 print(df)
 
 # Check on Quantity to see if all correct values passed. Cross Reference actual Grand Total on Packlist
