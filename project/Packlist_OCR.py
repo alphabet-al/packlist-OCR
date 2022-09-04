@@ -20,7 +20,7 @@ class Packlist_OCR:
             for page in pdf.pages:
                 text += page.extract_text()
 
-        good_row_re = re.compile(r'(^[A-Z]\d{5})')
+        good_row_re = re.compile(r'(^[A-Z]\d{3,5})')
         filtered_lst = []
 
         for row in text.split('\n'):
@@ -34,10 +34,8 @@ class Packlist_OCR:
     def print_df(self):
         print(self.df)
 
-    def total_qty_check(self):
-
 # Check on Quantity to see if all correct values passed. Cross Reference actual Grand Total on Packlist
-        
+    def total_qty_check(self):
         Total = self.df['Qty'].sum()
         print(Total)
 
@@ -57,17 +55,20 @@ class Packlist_OCR:
                     if len(b) == 12:
                         x,y,w,h = int(b[6]),int(b[7]),int(b[8]),int(b[9])
                         cv2.rectangle(frm, (x, y), (w+x, h+y), (0, 255, 0), 1)
-                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(50,50,255),1)
-                        if re.match(r'(\w{2}-\d{5,6})|(\d{6}-\w{2})|(TR6-\w{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
+                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.5,(50,50,255),1)
+                        if re.match(r'([A-Z]{2}-\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
                             self.part_number = b[11]
-                            winsound.Beep(1800,500)
+                            # winsound.Beep(1800,500)
 
         if self.part_number != '':
             self.search_df_for_part_number()
             return self.part_number
 
     def search_df_for_part_number(self):
-        print(self.df.loc[self.df['Part'] == self.part_number])
+        if self.part_number in self.df.values:
+            print(self.df.loc[self.df['Part'] == self.part_number])
+        else:
+            print('{} does not exist in the packlist'.format(self.part_number))
 
 # camera capture of part number from part label
     def video_capture(self):
@@ -82,11 +83,12 @@ class Packlist_OCR:
             frame = cv2.resize(frame, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_AREA)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+            # ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
             
-            part_num = self.box_on_frame(frame, thresh1)
-            if part_num is not None:
-                break
+            self.box_on_frame(frame,gray)
+            # part_num = self.box_on_frame(frame, gray)
+            # if part_num is not None:
+            #     break
 
             cv2.imshow('Input', frame)
 
@@ -97,7 +99,6 @@ class Packlist_OCR:
         cap.release()
         cv2.destroyAllWindows()
 
-        print (part_num)
 
     
 
@@ -109,7 +110,7 @@ class Packlist_OCR:
 
 
 # import packlist file
-input = r'project\\122135.pdf'
+input = r'project\\126941.pdf'
 
 # instantiate Packlist_OCR object
 packlist = Packlist_OCR(input)
@@ -117,7 +118,6 @@ packlist.packlist_conversion()
 # packlist.print_df()
 # packlist.total_qty_check()
 # packlist.export_df_xls()
-
 
 # While loop scanning label / displaying info / updating dataframe
 packlist.video_capture()

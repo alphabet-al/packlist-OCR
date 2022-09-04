@@ -4,15 +4,18 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
   
-img = cv2.imread("project/IMG.jpg", cv2.IMREAD_UNCHANGED)
+img = cv2.imread("project/IMG_3183.jpg", cv2.IMREAD_UNCHANGED)
 # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+img = cv2.resize(img, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 gray = cv2.bilateralFilter(gray, 20, 30, 30)
+ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
 edged = cv2.Canny(gray, 80, 100)
 
 cv2.imshow('orignial',img)
 cv2.imshow('gray', gray)
+cv2.imshow('Threshed', thresh1)
 cv2.imshow('edged', edged)
 cv2.waitKey(0)
 

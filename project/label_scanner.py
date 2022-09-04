@@ -31,7 +31,7 @@ def check_image_orientation(img_path):
         # cases: image don't have getexif
         pass
 
-image_path = 'project/IMG_3162.jpg'
+image_path = 'project/IMG_3183.jpg'
 check_image_orientation(image_path)
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
@@ -52,8 +52,9 @@ for x,b in enumerate(boxes.splitlines()):
         if len(b) == 12:
             x,y,w,h = int(b[6]),int(b[7]),int(b[8]),int(b[9])
             cv2.rectangle(img, (x, y), (w+x, h+y), (0, 255, 0), 1)
-            cv2.putText(img, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(50,50,255),1)
-            if re.match(r'(\w{2}-\d{5,6})|(\d{6}-\w{2})|(TR6-\w{2})', b[11]) or re.match(r'(\d{6})', b[11]) and len(b[11]) == 6:
+            cv2.putText(img, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,.5,(50,50,255),1)
+            if re.match(r'([a-zA-Z]{2}\s-\s\d{5,6})|(\d{6}-[a-zA-Z]{2})|(TR6-[a-zA-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
+            # if re.match(r'(\w{2}-\d{5,6})|(\d{6}-\w{2})|(TR6-\w{2})', b[11]) or re.match(r'(\d{6})', b[11]) and len(b[11]) == 6:
                 part_number = b[11]
 
 '''Shows original mage with boxes and text around captured text'''             

@@ -6,7 +6,7 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
   
 # Read image from which text needs to be extracted
-img = cv2.imread("project/label_wp.jpg")
+img = cv2.imread("project/IMG_3183.jpg")
 
 # Convert the image to gray scale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

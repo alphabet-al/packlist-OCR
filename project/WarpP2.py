@@ -21,7 +21,7 @@ def thresh_callback(val):
 parser = argparse.ArgumentParser(description='Code for Finding contours in your image tutorial.')
 parser.add_argument('--input', help='Path to input image.', default='HappyFish.jpg')
 args = parser.parse_args()
-src = cv.imread("project/label5.jpg", cv.IMREAD_REDUCED_COLOR_4)
+src = cv.imread("project/IMG_3183.jpg", cv.IMREAD_REDUCED_COLOR_4)
 if src is None:
     print('Could not open or find the image:', args.input)
     exit(0)
