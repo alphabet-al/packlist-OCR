@@ -28,9 +28,9 @@ class Packlist_OCR:
                 filtered_lst.append([row.split()[1], row.split()[2], int(row.split()[-1])])
 
         self.df = pd.DataFrame(filtered_lst)
-        self.df.columns = ["Project", "Part", "Qty"]
-        self.df['Picked Qty'] = ''
-
+        self.df.columns = ["Project", "Part", "Ship Qty"]
+        self.df['Receive Qty'] = 0
+        
     def print_df(self):
         print(self.df)
 
@@ -55,21 +55,33 @@ class Packlist_OCR:
                     if len(b) == 12:
                         x,y,w,h = int(b[6]),int(b[7]),int(b[8]),int(b[9])
                         cv2.rectangle(frm, (x, y), (w+x, h+y), (0, 255, 0), 1)
-                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.5,(50,50,255),1)
+                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.75,(50,50,255),1)
                         if re.match(r'([A-Z]{2}-\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
                             self.part_number = b[11]
-                            # winsound.Beep(1800,500)
+                            winsound.Beep(1800,500)
 
         if self.part_number != '':
             self.search_df_for_part_number()
             return self.part_number
 
     def search_df_for_part_number(self):
-        if self.part_number in self.df.values:
-            print(self.df.loc[self.df['Part'] == self.part_number])
-        else:
+        if self.part_number not in self.df.values:
             print('{} does not exist in the packlist'.format(self.part_number))
-
+        else:
+            for index, row in self.df.iterrows():
+                if row[1] == self.part_number:
+                    if row[2] != row[3]:
+                        print('Index: {}     Project: {}     Part #: {}     Shipped Quantity: {}     Received Quantity: {}'.format(index, row[0], row[1], row[2],row[3]))
+                        self.df.at[index, "Receive Qty"] += 1
+                        break
+                    else:
+                        if index == self.df.last_valid_index():
+                            print('EXTRA PART!!!')
+                        continue
+                else:
+                    if index == self.df.last_valid_index():
+                            print('EXTRA PART!!!')
+                    
 # camera capture of part number from part label
     def video_capture(self):
         cap = cv2.VideoCapture(1)
@@ -80,15 +92,12 @@ class Packlist_OCR:
 
         while True:
             _ , frame = cap.read()
-            frame = cv2.resize(frame, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_AREA)
+            frame = cv2.resize(frame, None, fx=3.0, fy=3.0, interpolation=cv2.INTER_AREA)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
             
             self.box_on_frame(frame,gray)
-            # part_num = self.box_on_frame(frame, gray)
-            # if part_num is not None:
-            #     break
 
             cv2.imshow('Input', frame)
 
@@ -99,14 +108,13 @@ class Packlist_OCR:
         cap.release()
         cv2.destroyAllWindows()
 
+# Create GUI to show scanned info
 
-    
+# Create Desktop Application
 
-# display part number, project name and total quantity (tkinter?)
+# Refine image recognition algorithm
 
-# update dataframe after part number is scanned from label
-
-# create function to display items where picked quantity doesn't equal part quantity
+# How do I factor in orientation of label??
 
 
 # import packlist file
