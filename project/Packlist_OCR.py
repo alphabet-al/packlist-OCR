@@ -6,6 +6,7 @@ import pdfplumber
 import re
 import pandas as pd
 import winsound
+from tkinter import *
  
 class Packlist_OCR:
 
@@ -46,7 +47,7 @@ class Packlist_OCR:
 # method to draw boxes and captured text on original image
     def box_on_frame(self, frm, gryfrm):
         pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-        boxes = pytesseract.image_to_data(gryfrm)
+        boxes = pytesseract.image_to_data(gryfrm, config='--psm 6 --oem 1')
         self.part_number = ''    
 
         for x,b in enumerate(boxes.splitlines()):
@@ -58,7 +59,7 @@ class Packlist_OCR:
                         cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.75,(50,50,255),1)
                         if re.match(r'([A-Z]{2}-\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
                             self.part_number = b[11]
-                            winsound.Beep(1800,500)
+                            # winsound.Beep(1800,500)
 
         if self.part_number != '':
             self.search_df_for_part_number()
@@ -71,7 +72,10 @@ class Packlist_OCR:
             for index, row in self.df.iterrows():
                 if row[1] == self.part_number:
                     if row[2] != row[3]:
-                        print('Index: {}     Project: {}     Part #: {}     Shipped Quantity: {}     Received Quantity: {}'.format(index, row[0], row[1], row[2],row[3]))
+                        # self.create_gui('Index: {}     Project: {}     Part #: {}     Shipped Quantity: {}     Received Quantity: {}'.format(index, row[0], row[1], row[2],row[3]))
+                        output = 'Index: {}     Project: {}     Part #: {}     Shipped Quantity: {}     Received Quantity: {}'.format(index, row[0], row[1], row[2],row[3])
+                        self.create_gui(output)
+                        # print('Index: {}     Project: {}     Part #: {}     Shipped Quantity: {}     Received Quantity: {}'.format(index, row[0], row[1], row[2],row[3]))
                         self.df.at[index, "Receive Qty"] += 1
                         break
                     else:
@@ -107,6 +111,18 @@ class Packlist_OCR:
 
         cap.release()
         cv2.destroyAllWindows()
+
+    def create_gui(self, label):
+
+        root = Tk()
+        root.title('Scanned Part')
+
+        mylabel = Label(root, font = ('Helvetica', 16), text = label)
+        mylabel.pack()
+        
+        root.mainloop()
+
+
 
 # Create GUI to show scanned info
 
