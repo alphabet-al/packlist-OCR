@@ -24,13 +24,6 @@ class Ui_MainWindow(object):
         self.label.setGeometry(QtCore.QRect(20, 20, 751, 31))
         self.label.setObjectName("label")
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -38,10 +31,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Scanned Item List"))
-        self.label.setText(_translate("MainWindow", "Index: 248     Project: Horney_07     Part #: 110176-WH     Shipped Quantity: 22     Received Quantity: 0"))
+        self.label.setText(_translate("MainWindow", "No Value"))
 
-
-        
+    def update_label(self, x):
+        self.label.setText(x)        
 
 
 if __name__ == "__main__":
@@ -50,5 +43,7 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    x = 'this is a test'
+    ui.update_label(x)
     MainWindow.show()
     sys.exit(app.exec_())

@@ -50,7 +50,7 @@ class Packlist_OCR:
 # method to draw boxes and captured text on original image
     def box_on_frame(self, frm, gryfrm, gui_obj):
         pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-        boxes = pytesseract.image_to_data(gryfrm, config='--psm 6 --oem 1')
+        boxes = pytesseract.image_to_data(gryfrm, config='--psm 6')
         self.part_number = '' 
         self.gui_obj = gui_obj   
 
@@ -60,10 +60,10 @@ class Packlist_OCR:
                     if len(b) == 12:
                         x,y,w,h = int(b[6]),int(b[7]),int(b[8]),int(b[9])
                         cv2.rectangle(frm, (x, y), (w+x, h+y), (0, 255, 0), 1)
-                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.75,(50,50,255),1)
-                        if re.match(r'([A-Z]{2}-\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
+                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,3,(50,50,255),3)
+                        if re.match(r'([A-Z]{2}\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
                             self.part_number = b[11]
-                            winsound.Beep(1800,500)
+                            winsound.Beep(1800,100)
 
         if self.part_number != '':
             self.search_df_for_part_number()
@@ -112,17 +112,28 @@ class Packlist_OCR:
 
         while True:
             _ , frame = cap.read()
-            frame = cv2.resize(frame, None, fx=1.0, fy=1.0, interpolation=cv2.INTER_AREA)
+            frame = cv2.resize(frame, None, fx=1.0, fy=1.0 , interpolation=cv2.INTER_AREA)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-            
-            self.box_on_frame(frame, gray, ui)
 
-            cv2.imshow('Input', frame)
+            # gray = cv2.bilateralFilter(gray, 1, 10, 10)
+            ret, thresh = cv2.threshold(gray, 190, 230, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+            # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,1))
+            # close = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+            # result = 255 - close
+
+
+            self.box_on_frame(frame, thresh, ui)
+            frame = cv2.resize(frame, None, fx=1.0, fy=1.0 , interpolation=cv2.INTER_AREA) 
+            cv2.imshow('result', frame)
+
+            # cv2.imshow('thresh', thresh)
+            # cv2.imshow('gray', gray)
+            # cv2.imshow('close', close)
+            # cv2.imshow('result', result)
 
             c = cv2.waitKey(1)
-            if c == 27:
+            if c == 32:
                 break
 
         cap.release()

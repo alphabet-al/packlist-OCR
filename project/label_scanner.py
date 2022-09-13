@@ -3,6 +3,7 @@ import cv2
 import pytesseract
 from PIL import Image, ExifTags
 import re
+import deskewimage as ds
 
 ''' taking a picture with the camera upside down will cause image to be orientated the wrong way.  This function
 checks the orientation of the taken image and rotates it prior to processing the image'''
@@ -31,12 +32,13 @@ def check_image_orientation(img_path):
         # cases: image don't have getexif
         pass
 
-image_path = 'project/IMG_3183.jpg'
+image_path = 'project/label3.jpg'
 check_image_orientation(image_path)
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
  
 img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+img = ds.deskew(img)
 img = cv2.resize(img, (0,0), fx = 0.5, fy = 0.5)
 
 # coverts image to grayscale, applys noise filter and edge detector
@@ -60,8 +62,3 @@ for x,b in enumerate(boxes.splitlines()):
 '''Shows original mage with boxes and text around captured text'''             
 cv2.imshow('Result',img)
 cv2.waitKey(0)
-
-print(part_number)
-
-
-

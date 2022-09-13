@@ -24,17 +24,17 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 img = cv2.imread("project/label.jpg", cv2.IMREAD_REDUCED_COLOR_2)
 
 img_original = img.copy()
-print(img)
+# print(img)
 
 # Convert the image to gray scale 
-color = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
-print(color)
+color = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
+# print(color)
 a_component = color[:,:,0]
-# gray = cv2.fastNlMeansDenoising(gray, 10, 10, 7, 21)
-# gray = cv2.bilateralFilter(gray, 1, 1, 1)
-edged = cv2.Canny(a_component, 10, 50)
+# gray = cv2.fastNlMeansDenoising(color, 10, 10, 7, 21)
+gray = cv2.bilateralFilter(color, 3, 10, 10)
+edged = cv2.Canny(a_component, 25, 50)
 
-# cv2.imshow('original', img)
+cv2.imshow('original', img)
 cv2.imshow('Color', color)
 cv2.imshow('Edged', edged)
 cv2.waitKey(0)
