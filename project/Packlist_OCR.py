@@ -2,6 +2,8 @@
 
 from operator import truediv
 import cv2
+from VideoShow import VideoShow
+from VideoGet import VideoGet
 import pytesseract
 import pdfplumber
 import re
@@ -96,12 +98,12 @@ class Packlist_OCR:
 
                     
 # camera capture of part number from part label
-    def video_capture(self):
-        cap = cv2.VideoCapture(1)
+    def video_capture(self, source = 1):
+        # cap = cv2.VideoCapture(1)
 
         # Check if the webcam is opened correctly
-        if not cap.isOpened():
-            raise IOError("Cannot open webcam")
+        # if not cap.isOpened():
+        #     raise IOError("Cannot open webcam")
 
         # Initializes GUI Window     
         import sys
@@ -110,10 +112,21 @@ class Packlist_OCR:
         ui = Ui_MainWindow()
         ui.setupUi(MainWindow)
         MainWindow.show()
+
+        video_getter = VideoGet(source).start()
+        video_shower = VideoShow(video_getter.frame).start()
+
         
 
         while True:
-            _ , frame = cap.read()
+            # _ , frame = cap.read()
+            
+            if video_getter.stopped or video_shower.stopped:
+                video_shower.stop()
+                video_getter.stop()
+                break
+
+            frame = video_getter.frame
             frame = cv2.resize(frame, None, fx=5.0, fy=5.0 , interpolation=cv2.INTER_AREA)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -127,18 +140,19 @@ class Packlist_OCR:
 
             self.box_on_frame(frame, thresh, ui)
             frame = cv2.resize(frame, None, fx=0.2, fy=0.2 , interpolation=cv2.INTER_AREA) 
-            cv2.imshow('result', frame)
+            video_shower.frame = frame
+            # cv2.imshow('result', frame)
 
             # cv2.imshow('thresh', thresh)
             # cv2.imshow('gray', gray)
             # cv2.imshow('close', close)
             # cv2.imshow('result', result)
 
-            c = cv2.waitKey(1)
-            if c == 32:
-                break 
+            # c = cv2.waitKey(1)
+            # if c == 32:
+            #     break 
 
-        cap.release()
+        # cap.release()
         cv2.destroyAllWindows()
         sys.exit(app.exec_())
 
@@ -179,7 +193,7 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     # import packlist file
-    input = r'project\\127932.pdf'
+    input = r'project\\126941.pdf'
 
     # instantiate Packlist_OCR object
     packlist = Packlist_OCR(input)
