@@ -40,7 +40,7 @@ class Packlist_OCR:
 
 # Check on Quantity to see if all correct values passed. Cross Reference actual Grand Total on Packlist
     def total_qty_check(self):
-        Total = self.df['Qty'].sum()
+        Total = self.df['Ship Qty'].sum()
         print(Total)
 
     def export_df_xls(self):
@@ -54,6 +54,8 @@ class Packlist_OCR:
         self.part_number = '' 
         self.gui_obj = gui_obj   
 
+        # print(boxes)
+
         for x,b in enumerate(boxes.splitlines()):
                 if x != 0:
                     b = b.split()
@@ -61,7 +63,7 @@ class Packlist_OCR:
                         x,y,w,h = int(b[6]),int(b[7]),int(b[8]),int(b[9])
                         cv2.rectangle(frm, (x, y), (w+x, h+y), (0, 255, 0), 1)
                         cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,3,(50,50,255),3)
-                        if re.match(r'([A-Z]{2}\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
+                        if re.match(r'([A-Z]{2}-\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
                             self.part_number = b[11]
                             winsound.Beep(1800,100)
 
@@ -112,7 +114,7 @@ class Packlist_OCR:
 
         while True:
             _ , frame = cap.read()
-            frame = cv2.resize(frame, None, fx=1.0, fy=1.0 , interpolation=cv2.INTER_AREA)
+            frame = cv2.resize(frame, None, fx=5.0, fy=5.0 , interpolation=cv2.INTER_AREA)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -124,7 +126,7 @@ class Packlist_OCR:
 
 
             self.box_on_frame(frame, thresh, ui)
-            frame = cv2.resize(frame, None, fx=1.0, fy=1.0 , interpolation=cv2.INTER_AREA) 
+            frame = cv2.resize(frame, None, fx=0.2, fy=0.2 , interpolation=cv2.INTER_AREA) 
             cv2.imshow('result', frame)
 
             # cv2.imshow('thresh', thresh)
@@ -134,7 +136,7 @@ class Packlist_OCR:
 
             c = cv2.waitKey(1)
             if c == 32:
-                break
+                break 
 
         cap.release()
         cv2.destroyAllWindows()
@@ -177,7 +179,7 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     # import packlist file
-    input = r'project\\126941.pdf'
+    input = r'project\\127932.pdf'
 
     # instantiate Packlist_OCR object
     packlist = Packlist_OCR(input)
