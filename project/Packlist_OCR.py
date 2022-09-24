@@ -4,6 +4,7 @@ from operator import truediv
 import cv2
 from VideoShow import VideoShow
 from VideoGet import VideoGet
+from CountsPerSec import CountsPerSec
 import pytesseract
 import pdfplumber
 import re
@@ -12,6 +13,14 @@ import winsound
 from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 
+def putIterationsPerSec(frame, iterations_per_sec):
+    """
+    Add iterations per second text to lower-left corner of a frame.
+    """
+
+    cv2.putText(frame, "{:.0f} iterations/sec".format(iterations_per_sec),
+        (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+    return frame
  
 class Packlist_OCR:
 
@@ -63,8 +72,8 @@ class Packlist_OCR:
                     b = b.split()
                     if len(b) == 12:
                         x,y,w,h = int(b[6]),int(b[7]),int(b[8]),int(b[9])
-                        cv2.rectangle(frm, (x, y), (w+x, h+y), (0, 255, 0), 1)
-                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,3,(50,50,255),3)
+                        # cv2.rectangle(frm, (x, y), (w+x, h+y), (0, 255, 0), 1)
+                        cv2.putText(frm, b[11],(x, y-3),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(50,50,255),1)
                         if re.match(r'([A-Z]{2}-\d{5,6})|(\d{6}-[A-Z]{2})|(TR6-[A-Z]{2})', b[11]) or re.match(r'(\s\d{6}\s)', b[11]) and len(b[11]) == 6:
                             self.part_number = b[11]
                             winsound.Beep(1800,100)
@@ -115,6 +124,7 @@ class Packlist_OCR:
 
         video_getter = VideoGet(source).start()
         video_shower = VideoShow(video_getter.frame).start()
+        cps = CountsPerSec().start()
 
         
 
@@ -127,20 +137,26 @@ class Packlist_OCR:
                 break
 
             frame = video_getter.frame
-            frame = cv2.resize(frame, None, fx=5.0, fy=5.0 , interpolation=cv2.INTER_AREA)
+
+            # frame = cv2.resize(frame, None, fx=5.0, fy=5.0 , interpolation=cv2.INTER_AREA)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             # gray = cv2.bilateralFilter(gray, 1, 10, 10)
-            ret, thresh = cv2.threshold(gray, 190, 230, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+            # ret, thresh = cv2.threshold(gray, 190, 230, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
             # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,1))
             # close = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
             # result = 255 - close
 
 
-            self.box_on_frame(frame, thresh, ui)
-            frame = cv2.resize(frame, None, fx=0.2, fy=0.2 , interpolation=cv2.INTER_AREA) 
+            self.box_on_frame(frame, gray, ui)
+            # frame = cv2.resize(frame, None, fx=0.2, fy=0.2 , interpolation=cv2.INTER_AREA) 
+
+            frame = putIterationsPerSec(frame, cps.countsPerSec())
             video_shower.frame = frame
+            cps.increment() 
+
+
             # cv2.imshow('result', frame)
 
             # cv2.imshow('thresh', thresh)
@@ -188,6 +204,8 @@ class Ui_MainWindow(object):
             pass
         else:
             self.listWidget.addItem(self.label.text())
+
+    
  
 # Create Desktop Application
 
