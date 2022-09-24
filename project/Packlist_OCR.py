@@ -34,6 +34,8 @@ class Packlist_OCR:
         self.df = pd.DataFrame(filtered_lst)
         self.df.columns = ["Project", "Part", "Ship Qty"]
         self.df['Receive Qty'] = 0
+
+        # self.df.to_pickle('./project/saved_df.pkl')
         
     def print_df(self):
         print(self.df)
@@ -179,14 +181,14 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     # import packlist file
-    input = r'project\\127932.pdf'
+    input = r'C:\Users\alanv\PythonCode\Projects\packlist OCR\project\127932.pdf'
 
     # instantiate Packlist_OCR object
     packlist = Packlist_OCR(input)
-    packlist.packlist_conversion()
+    # packlist.packlist_conversion()
     # packlist.print_df()
     # packlist.total_qty_check()
     # packlist.export_df_xls()
 
     # While loop scanning label / displaying info / updating dataframe
-    packlist.video_capture()
+    # packlist.video_capture()
