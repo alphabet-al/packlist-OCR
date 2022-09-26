@@ -137,7 +137,7 @@ class Packlist_OCR:
             if cps._num_occurrences % 1000 == 0:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 ret, thresh = cv2.threshold(gray, 210, 230, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-                # self.box_on_frame(frame, thresh, ui)
+                self.box_on_frame(frame, thresh, ui)
 
             frame = putIterationsPerSec(frame, cps.countsPerSec())
             video_shower.frame = frame
@@ -154,10 +154,10 @@ if __name__ == "__main__":
 
     # instantiate Packlist_OCR object
     packlist = Packlist_OCR(input)
-    # packlist.packlist_conversion()
+    packlist.packlist_conversion()
     # packlist.print_df()
     # packlist.total_qty_check()
     # packlist.export_df_xls()
 
     # While loop scanning label / displaying info / updating dataframe
-    # packlist.video_capture()
+    packlist.video_capture()
