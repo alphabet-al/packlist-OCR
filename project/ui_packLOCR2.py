@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'packLOCR.ui'
+# Form implementation generated from reading ui file 'c:\Users\alanv\PythonCode\Projects\packlist OCR\project\packLOCR2.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -14,14 +14,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 241)
+        MainWindow.resize(1512, 285)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
-        self.listWidget.setGeometry(QtCore.QRect(20, 70, 751, 121))
+        self.listWidget.setGeometry(QtCore.QRect(20, 70, 1471, 181))
+        self.listWidget.setSizeIncrement(QtCore.QSize(0, 0))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.listWidget.setFont(font)
+        self.listWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.listWidget.setResizeMode(QtWidgets.QListView.Adjust)
         self.listWidget.setObjectName("listWidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(20, 20, 751, 31))
+        self.label.setGeometry(QtCore.QRect(20, 20, 1471, 31))
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.label.setFont(font)
         self.label.setObjectName("label")
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -31,28 +40,4 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Scanned Item List"))
-        self.label.setText(_translate("MainWindow", "No Value"))
-
-    def update_label(self, x):
-        self.label.setText(x)     
-
-    def update_list(self):
-        if self.label.text() == "No Value":
-            pass
-        else:
-            self.listWidget.addItem(self.label.text())
-
-    def stop(self, application):
-        self.stopped = True
-        sys.exit(application.exec_())
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    ui.stop(app)
-
+        self.label.setText(_translate("MainWindow", "TextLabel"))
