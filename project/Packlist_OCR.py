@@ -134,7 +134,7 @@ class Packlist_OCR:
             frame = video_getter.frame
 
             # capture frame after n occurances to reduce lag in video code
-            if cps._num_occurrences % 1000 == 0:
+            if cps._num_occurrences % 10000 == 0:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 ret, thresh = cv2.threshold(gray, 210, 230, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
                 self.box_on_frame(frame, thresh, ui)
@@ -150,7 +150,7 @@ class Packlist_OCR:
 
 if __name__ == "__main__":
     # import packlist file
-    input = r'C:\Users\alanv\PythonCode\Projects\packlist OCR\project\126941.pdf'
+    input = r'C:\Users\alanv\PythonCode\Projects\packlist OCR\project\129184.pdf'
 
     # instantiate Packlist_OCR object
     packlist = Packlist_OCR(input)

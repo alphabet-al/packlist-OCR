@@ -21,15 +21,15 @@ def biggest_contour(contours):
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
  
 # Read image from which text needs to be extracted
-img = cv2.imread("project/label.jpg", cv2.IMREAD_REDUCED_COLOR_2)
+img = cv2.imread("project/label6.jpg", cv2.IMREAD_REDUCED_COLOR_2)
 
 img_original = img.copy()
 # print(img)
 
 # Convert the image to gray scale 
-color = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
+color = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # print(color)
-a_component = color[:,:,0]
+# a_component = color[:,:,0]
 # gray = cv2.fastNlMeansDenoising(color, 10, 10, 7, 21)
 gray = cv2.bilateralFilter(color, 3, 10, 10)
 edged = cv2.Canny(a_component, 25, 50)
